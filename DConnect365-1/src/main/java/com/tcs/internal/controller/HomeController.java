@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class HomeController {
-	@RequestMapping("/")
-	@ResponseBody
+	@RequestMapping("/home")
 	public String alertmMe() {
-		return "Test Testas e";
+		System.out.println("test");
+		return "hello.html";
 	}
 	
 }
