@@ -9,7 +9,7 @@ public class HomeController {
 	@RequestMapping("/")
 	@ResponseBody
 	public String alertmMe() {
-		return "Ry e";
+		return "Test Testas e";
 	}
 	
 }
