@@ -19,7 +19,7 @@ import com.tcs.internal.models.BookingDetails;
 @Controller
 public class HomeController {
 	@Autowired
-	bookingRepo bookingRepo;
+	com.tcs.internal.repo.bookingRepo bookingRepo;
 	
 	@RequestMapping("/index")
 	public String getIndex() {
