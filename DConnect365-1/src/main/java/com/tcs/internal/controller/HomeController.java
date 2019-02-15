@@ -1,6 +1,9 @@
 package com.tcs.internal.controller;
 
 import java.net.Authenticator.RequestorType;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.security.auth.message.callback.PrivateKeyCallback.Request;
@@ -11,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -31,6 +35,28 @@ public class HomeController {
 		return "hello.html";
 	}
 	
+	@RequestMapping(value="/saveAppointment",method=RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<String> saveAppointment(@RequestParam("deptName") String deptName,@RequestParam("drName") String drName,
+			@RequestParam("dateSel") String dateSel,@RequestParam("timeSel") String timeSel) {
+		System.out.println("home" + deptName+timeSel );
+		BookingDetails bd = new BookingDetails();
+		bd.setDept(deptName);
+		Date date1 = null;
+		try {
+			date1 = new SimpleDateFormat("MM/dd/yyyy").parse(dateSel);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+		bd.setDoctorName(drName);
+		bd.setBookingDate(date1);
+		bd.setPatientName("Whoami");
+		bookingRepo.save(bd);
+		return new ResponseEntity<String>("{\"result\":\"success\"}",HttpStatus.OK) ;
+	}
+	
+	
 	@RequestMapping(value="/home",method=RequestMethod.POST)
 	public String alertmMe() {
 		System.out.println("home");
@@ -41,7 +67,10 @@ public class HomeController {
 	public ModelAndView getPatientHistory() {
 		System.out.println("home");
 		List<BookingDetails> bdList = bookingRepo.findAll();
-		ModelAndView mv =new ModelAndView("index.html","bdList",bdList);
+		for(BookingDetails bd:bdList) {
+			System.out.println(bd.getPatientName());
+		}
+		ModelAndView mv =new ModelAndView("index.html","patientlIst",bdList);
 		return mv;
 	}
 	
@@ -50,5 +79,6 @@ public class HomeController {
 		System.out.println("sss");
 		return "mdTable.html";
 	}
+	
 	
 }

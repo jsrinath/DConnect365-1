@@ -12,7 +12,13 @@ public class BookingDetails {
 	private String patientName;
 	private String doctorName;
 	private Date bookingDate;
-	
+	private String dept;
+	public String getDept() {
+		return dept;
+	}
+	public void setDept(String dept) {
+		this.dept = dept;
+	}
 	public String getPatientName() {
 		return patientName;
 	}
