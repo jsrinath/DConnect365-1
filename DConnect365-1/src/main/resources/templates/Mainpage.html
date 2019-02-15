@@ -116,13 +116,14 @@
     <h2>Book your appointment here!</h2>
     <p>24*7 Doctor appointment </p>
   </div>
-  <form ng-click="myFunc()">
+  <div ng-app="myApp" ng-controller="myCtrl">
+  <form ng-submit="myFunc()">
    
 
   
-<div ng-app="myApp" ng-controller="myCtrl">
+
 <label>Department</label>
-<select ng-model="selectedName" ng-options="x for x in dept">
+<select ng-model="deptName" ng-options="x for x in dept">
 </select>
 
 <label>Doctor List</label>
@@ -137,29 +138,42 @@
 <select ng-model="timeSel" ng-options="x for x in Time">
 </select>
     <input type="submit" name="book an Appointment"  >
-<div ng-if="submitted ">
+<div ng-if="submitted">
          <div ng-messages-include="my-custom-messages">Appointment booked successfully</div>     
        </div>
-</div>
+
 
 </form>
+</div>
 <script>
 
 var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope) {
+app.controller('myCtrl', function($scope,$http) {
   $scope.dept = ["Gyn", "Card", "Ortho"];
   $scope.names = ["Srinath", "Tobias", "Linus"];
   $scope.Date = ["16/02/2019", "17/02/2019", "19/02/2019"];
-  $scope.Time = ["16/02/2019", "17/02/2019", "19/02/2019"];
-
-//   $scope.myFunc = function () {
-//       $scope.myTxt = "You clicked submit!";
-//       alert("Appoinment booked Suceesfully");
-//   }
+  $scope.Time = ["10am", "11am", "12am"];
+ $scope.submitted=false;
+   $scope.myFunc = function () {
+       $scope.myTxt = "You clicked submit!";
+       $scope.submitted=true;
+       var data = 'deptName='+$scope.deptName+'&drName='+$scope.drName+'&dateSel='+$scope.dateSel+'&timeSel='+$scope.timeSel;
+       alert(data);
+       var response =  $http({
+           method: 'GET',
+           url: 'saveAppointment?'+data,
+           contentType: 'application/json'
+       }).then(function (response){
+			alert(response)
+       },function (error){
+    	   alert(error)
+       });
+    }
 });
 
 
 function myFunction() {
+	
   document.getElementById("Dropdown").classList.toggle("show");
 }
 
