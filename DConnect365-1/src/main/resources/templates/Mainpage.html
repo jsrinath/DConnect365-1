@@ -80,10 +80,15 @@
   text-align: center;
 }
 </style>
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
  <link href="//ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.css" rel="stylesheet">
     <link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="//fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic" rel="stylesheet">
+
+<link rel="stylesheet"; href="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.css">
+<script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"></script>
 <!--     <link href="material-icons.css" rel="stylesheet">
     <link href="css/md-table.css" rel="stylesheet">
     <link href="sample.css" rel="stylesheet">
@@ -116,10 +121,10 @@
     <h2>Book your appointment here!</h2>
     <p>24*7 Doctor appointment </p>
   </div>
-  <div ng-app="myApp" ng-controller="myCtrl">
+  <div ng-app="myApp" ng-controller="myCtrl" ng-init="loadbookingDetails()"> 
   <form ng-submit="myFunc()">
-   
-
+   <label>Patient Name:</label>
+<input type="text" name="patient name" ng-model="ptName"/>
   
 
 <label>Department</label>
@@ -137,34 +142,64 @@
 
 <select ng-model="timeSel" ng-options="x for x in Time">
 </select>
-    <input type="submit" name="book an Appointment"  >
+    <input type="submit" name="book an Appointment"  value="book an Appointment" >
 <div ng-if="submitted">
          <div ng-messages-include="my-custom-messages">Appointment booked successfully</div>     
        </div>
+	
+<br/>
+<p>Booking History</p>
+<table ng-table ="usersTable" class="table" show-filter="true">
+
+<tr ng-repeat="user in patHis">
+	<td data-title="'Patient Name'">{{user.patientName}}</td>
+	<td data-title="'DoctorName'">{{user.doctorName}}</td>
+	<td data-title="'Department'">{{user.dept}}</td>
+	<td data-title="'Booking date'">{{user.bookingDate}}</td>
+</tr>
+
+</table>
 
 
 </form>
 </div>
 <script>
 
-var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope,$http) {
+var app = angular.module('myApp', ["ngTable"]);
+app.controller('myCtrl', function($scope,$http,NgTableParams) {
   $scope.dept = ["Gyn", "Card", "Ortho"];
-  $scope.names = ["Srinath", "Tobias", "Linus"];
-  $scope.Date = ["02/16/2019", "02/17/2019", "02/18/2019"];
+  $scope.names = ["Srinath", "Ram", "Tom"];
+  $scope.Date = ["02/20/2019", "02/21/2019", "02/22/2019"];
   $scope.Time = ["10am", "11am", "12am"];
+  $scope.patHis={};
  $scope.submitted=false;
+ 
+ $scope.loadbookingDetails = function() {
+	 var response =  $http({
+         method: 'GET',
+         url: 'bookingDetails',
+         contentType: 'application/json'
+     }).then(function (response){
+  	   $scope.patHis=response.data;
+  	   $scope.usersTable = new NgTableParams({}, { dataset: $scope.patHis });
+     },function (error){
+  	   alert(error)
+     });
+ } ;
+ 
+ 
    $scope.myFunc = function () {
        $scope.myTxt = "You clicked submit!";
        $scope.submitted=true;
-       var data = 'deptName='+$scope.deptName+'&drName='+$scope.drName+'&dateSel='+$scope.dateSel+'&timeSel='+$scope.timeSel;
+       var data = 'ptName='+$scope.ptName+'&deptName='+$scope.deptName+'&drName='+$scope.drName+'&dateSel='+$scope.dateSel+'&timeSel='+$scope.timeSel;
        alert(data);
        var response =  $http({
            method: 'GET',
            url: 'saveAppointment?'+data,
            contentType: 'application/json'
        }).then(function (response){
-			alert(response)
+    	   $scope.patHis=response.data;
+    	   $scope.usersTable = new NgTableParams({}, { dataset: $scope.patHis });
        },function (error){
     	   alert(error)
        });

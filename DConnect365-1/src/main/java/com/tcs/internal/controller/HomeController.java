@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,10 +38,11 @@ public class HomeController {
 	
 	@RequestMapping(value="/saveAppointment",method=RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<String> saveAppointment(@RequestParam("deptName") String deptName,@RequestParam("drName") String drName,
+	public ResponseEntity saveAppointment(@RequestParam("ptName") String ptName,@RequestParam("deptName") String deptName,@RequestParam("drName") String drName,
 			@RequestParam("dateSel") String dateSel,@RequestParam("timeSel") String timeSel) {
 		System.out.println("home" + deptName+timeSel );
 		BookingDetails bd = new BookingDetails();
+		bd.setPatientName(ptName);
 		bd.setDept(deptName);
 		Date date1 = null;
 		try {
@@ -51,9 +53,16 @@ public class HomeController {
 		}  
 		bd.setDoctorName(drName);
 		bd.setBookingDate(date1);
-		bd.setPatientName("Whoami");
 		bookingRepo.save(bd);
-		return new ResponseEntity<String>("{\"result\":\"success\"}",HttpStatus.OK) ;
+		List<BookingDetails> bdList = bookingRepo.findAll();
+		return new ResponseEntity(bdList,HttpStatus.OK) ;
+	}
+	
+	@RequestMapping(value="/bookingDetails",method=RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity bookingDetails() {
+		List<BookingDetails> bdList = bookingRepo.findAll();
+		return new ResponseEntity(bdList,HttpStatus.OK) ;
 	}
 	
 	
@@ -70,7 +79,9 @@ public class HomeController {
 		for(BookingDetails bd:bdList) {
 			System.out.println(bd.getPatientName());
 		}
-		ModelAndView mv =new ModelAndView("index.html","patientlIst",bdList);
+		ModelMap md = new ModelMap();
+		md.addAttribute("test","Tests");
+		ModelAndView mv =new ModelAndView("index.html",md);
 		return mv;
 	}
 	
