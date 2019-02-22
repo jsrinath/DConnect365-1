@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html language="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8"/>
     <title>angular material multiple select</title>
@@ -38,7 +38,14 @@
 		</div>
 	</div>
 </md-toolbar> 
-SS {{bdList.get(0).getPatientName()}}
+<!-- S{patientlIst.get(0).getPatientName()} TestTestse
+  <table>
+         
+            <tr th:each="patient : patientlIst">
+        <td th:text="${patient.getPatientName()}"></td>
+    </tr>
+        </table> -->
+        <span th:text="S{test}" />
 <md-table headers-class="headerClass" contents-class="contentClass"
           headers="headers" contents="contents"
           pagination="true" page-count="pageItems"
